@@ -1,4 +1,4 @@
-export default function BalanceCard({ payments }) {
+export default function BalanceCard({ payments, bills = [] }) {
   const eversonPaid = payments
     .filter(p => p.paid_by === 'Everson')
     .reduce((sum, p) => sum + Number(p.amount), 0)
@@ -8,6 +8,7 @@ export default function BalanceCard({ payments }) {
     .reduce((sum, p) => sum + Number(p.amount), 0)
 
   const total = eversonPaid + claudiaPaid
+  const totalBills = bills.reduce((sum, b) => sum + Number(b.amount), 0)
   const fairShare = total / 2
   const diff = eversonPaid - fairShare
   const amount = Math.abs(diff)
@@ -25,7 +26,7 @@ export default function BalanceCard({ payments }) {
       <div style={styles.header}>
         <p style={styles.label}>RESUMO DO MÊS</p>
         <div style={styles.totalBadge}>
-          <span style={styles.totalText}>Total: R$ {total.toFixed(2)}</span>
+          <span style={styles.totalText}>Total: R$ {totalBills.toFixed(2)}</span>
         </div>
       </div>
 

@@ -116,7 +116,7 @@ export default function Dashboard({ user, onLogout }) {
       </div>
 
       <div style={styles.content}>
-        <BalanceCard payments={payments} />
+        <BalanceCard payments={payments} bills={activeBills} />
 
         <div style={styles.sectionHeader}>
           <p style={styles.sectionTitle}>CONTAS DO MÊS</p>
