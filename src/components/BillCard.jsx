@@ -70,8 +70,10 @@ export default function BillCard({ bill, payment, onPay, onUndoPay, onDelete }) 
 
 const styles = {
   card: {
-    background: 'white',
-    border: '1px solid var(--border)',
+    background: 'rgba(255,255,255,0.75)',
+    backdropFilter: 'blur(12px)',
+    WebkitBackdropFilter: 'blur(12px)',
+    border: '1px solid rgba(255,255,255,0.5)',
     borderRadius: 'var(--radius)',
     padding: '16px',
     display: 'flex',
@@ -81,8 +83,8 @@ const styles = {
     transition: 'all 0.2s ease',
   },
   cardPaid: {
-    borderColor: 'rgba(16,185,129,0.2)',
-    background: '#f0fdf8',
+    borderColor: 'rgba(16,185,129,0.3)',
+    background: 'rgba(240,253,248,0.85)',
   },
   top: {
     display: 'flex',
@@ -139,7 +141,7 @@ const styles = {
   },
   separator: {
     height: '1px',
-    background: 'var(--border)',
+    background: 'rgba(0,0,0,0.06)',
   },
   paidRow: {
     display: 'flex',
@@ -151,12 +153,12 @@ const styles = {
     color: 'var(--text-muted)',
   },
   undoBtn: {
-    background: 'none',
+    background: 'rgba(255,255,255,0.6)',
     color: 'var(--text-dim)',
     fontSize: '12px',
     padding: '4px 10px',
     borderRadius: '8px',
-    border: '1px solid var(--border)',
+    border: '1px solid rgba(0,0,0,0.08)',
   },
   actions: {
     display: 'flex',
@@ -171,12 +173,12 @@ const styles = {
     border: '1px solid transparent',
   },
   payEverson: {
-    background: 'rgba(37,99,235,0.06)',
+    background: 'rgba(37,99,235,0.08)',
     color: 'var(--everson)',
     borderColor: 'rgba(37,99,235,0.15)',
   },
   payClaudia: {
-    background: 'rgba(219,39,119,0.06)',
+    background: 'rgba(219,39,119,0.08)',
     color: 'var(--claudia)',
     borderColor: 'rgba(219,39,119,0.15)',
   },
@@ -202,12 +204,12 @@ const styles = {
     gap: '8px',
   },
   confirmNo: {
-    background: 'var(--bg-hover)',
+    background: 'rgba(255,255,255,0.6)',
     color: 'var(--text-muted)',
     fontSize: '12px',
     padding: '4px 12px',
     borderRadius: '8px',
-    border: '1px solid var(--border)',
+    border: '1px solid rgba(0,0,0,0.08)',
   },
   confirmYes: {
     background: 'rgba(239,68,68,0.08)',
