@@ -16,10 +16,12 @@ export default function BalanceCard({ payments, bills = [] }) {
   const creditor = diff > 0 ? 'Everson' : 'Claudia'
   const balanced = amount < 0.01
 
-  const eversonPct = fairShare > 0 ? Math.min((eversonPaid / fairShare) * 100, 100) : 0
-  const claudiaPct = fairShare > 0 ? Math.min((claudiaPaid / fairShare) * 100, 100) : 0
-  const eversonDone = fairShare > 0 && eversonPaid >= fairShare - 0.01
-  const claudiaDone = fairShare > 0 && claudiaPaid >= fairShare - 0.01
+  const eversonRemaining = Math.max(fairShare - eversonPaid, 0)
+  const claudiaRemaining = Math.max(fairShare - claudiaPaid, 0)
+  const eversonRemainingPct = fairShare > 0 ? (eversonRemaining / fairShare) * 100 : 0
+  const claudiaRemainingPct = fairShare > 0 ? (claudiaRemaining / fairShare) * 100 : 0
+  const eversonDone = fairShare > 0 && eversonRemaining < 0.01
+  const claudiaDone = fairShare > 0 && claudiaRemaining < 0.01
 
   const total = eversonPaid + claudiaPaid
 
@@ -43,21 +45,17 @@ export default function BalanceCard({ payments, bills = [] }) {
             </div>
             <span style={styles.barName}>Everson</span>
           </div>
-          <div style={{
-            ...styles.barTrack,
-            background: eversonDone ? 'rgba(37,99,235,0.12)' : 'rgba(0,0,0,0.06)',
-          }}>
+          <div style={styles.barTrack}>
             <div style={{
               ...styles.barFill,
-              width: `${eversonPct}%`,
+              width: `${eversonRemainingPct}%`,
               background: eversonDone
-                ? 'linear-gradient(90deg, #2563eb, #60a5fa)'
-                : 'linear-gradient(90deg, #93c5fd, #bfdbfe)',
+                ? 'transparent'
+                : 'linear-gradient(90deg, #93c5fd, #2563eb)',
             }} />
           </div>
-          <span style={{...styles.barValue, color: eversonDone ? 'var(--everson)' : 'var(--text-dim)'}}>
-            R$ {eversonPaid.toFixed(2)}
-            {eversonDone && <span style={styles.checkMark}> ✓</span>}
+          <span style={{...styles.barValue, color: eversonDone ? 'var(--success)' : 'var(--everson)'}}>
+            {eversonDone ? '✓ quitado' : `R$ ${eversonRemaining.toFixed(2)}`}
           </span>
         </div>
 
@@ -69,21 +67,17 @@ export default function BalanceCard({ payments, bills = [] }) {
             </div>
             <span style={styles.barName}>Claudia</span>
           </div>
-          <div style={{
-            ...styles.barTrack,
-            background: claudiaDone ? 'rgba(219,39,119,0.12)' : 'rgba(0,0,0,0.06)',
-          }}>
+          <div style={styles.barTrack}>
             <div style={{
               ...styles.barFill,
-              width: `${claudiaPct}%`,
+              width: `${claudiaRemainingPct}%`,
               background: claudiaDone
-                ? 'linear-gradient(90deg, #db2777, #f472b6)'
-                : 'linear-gradient(90deg, #f9a8d4, #fce7f3)',
+                ? 'transparent'
+                : 'linear-gradient(90deg, #f9a8d4, #db2777)',
             }} />
           </div>
-          <span style={{...styles.barValue, color: claudiaDone ? 'var(--claudia)' : 'var(--text-dim)'}}>
-            R$ {claudiaPaid.toFixed(2)}
-            {claudiaDone && <span style={styles.checkMark}> ✓</span>}
+          <span style={{...styles.barValue, color: claudiaDone ? 'var(--success)' : 'var(--claudia)'}}>
+            {claudiaDone ? '✓ quitado' : `R$ ${claudiaRemaining.toFixed(2)}`}
           </span>
         </div>
 
@@ -91,7 +85,7 @@ export default function BalanceCard({ payments, bills = [] }) {
         {fairShare > 0 && (
           <div style={styles.fairLegend}>
             <div style={styles.fairDash} />
-            <span style={styles.fairText}>meta: R$ {fairShare.toFixed(2)} cada</span>
+            <span style={styles.fairText}>barra cheia = R$ {fairShare.toFixed(2)} a pagar</span>
             <div style={styles.fairDash} />
           </div>
         )}
