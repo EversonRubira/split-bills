@@ -1,7 +1,9 @@
 import { useState } from 'react'
+import PayConfirmModal from './PayConfirmModal'
 
 export default function BillCard({ bill, payment, onPay, onUndoPay, onDelete }) {
   const [confirm, setConfirm] = useState(false)
+  const [payConfirm, setPayConfirm] = useState(null)
   const isPaid = !!payment
 
   return (
@@ -15,8 +17,8 @@ export default function BillCard({ bill, payment, onPay, onUndoPay, onDelete }) 
           <span style={styles.due}>vence dia {bill.day_of_month}</span>
         </div>
         <div style={styles.right}>
-          <span style={styles.amount}>R$ {Number(bill.amount).toFixed(2)}</span>
-          <span style={styles.split}>R$ {(Number(bill.amount) / 2).toFixed(2)} cada</span>
+          <span style={styles.amount}>R$ {isPaid ? Number(payment.amount).toFixed(2) : Number(bill.amount).toFixed(2)}</span>
+          <span style={styles.split}>R$ {((isPaid ? Number(payment.amount) : Number(bill.amount)) / 2).toFixed(2)} cada</span>
         </div>
       </div>
 
@@ -30,39 +32,47 @@ export default function BillCard({ bill, payment, onPay, onUndoPay, onDelete }) 
               {payment.paid_by}
             </span>
           </span>
-          <button style={styles.undoBtn} onClick={() => onUndoPay(payment.id)}>
-            desfazer
-          </button>
         </div>
       ) : (
         <div style={styles.actions}>
           <button
             style={{...styles.payBtn, ...styles.payEverson}}
-            onClick={() => onPay(bill, 'Everson')}
+            onClick={() => setPayConfirm('Everson')}
           >
             Everson pagou
           </button>
           <button
             style={{...styles.payBtn, ...styles.payClaudia}}
-            onClick={() => onPay(bill, 'Claudia')}
+            onClick={() => setPayConfirm('Claudia')}
           >
             Claudia pagou
           </button>
         </div>
       )}
 
-      {confirm ? (
-        <div style={styles.confirmRow}>
-          <span style={styles.confirmText}>Remover esta conta?</span>
-          <div style={styles.confirmBtns}>
-            <button style={styles.confirmNo} onClick={() => setConfirm(false)}>não</button>
-            <button style={styles.confirmYes} onClick={() => { onDelete(bill.id); setConfirm(false) }}>sim</button>
+      {!isPaid && (
+        confirm ? (
+          <div style={styles.confirmRow}>
+            <span style={styles.confirmText}>Remover esta conta?</span>
+            <div style={styles.confirmBtns}>
+              <button style={styles.confirmNo} onClick={() => setConfirm(false)}>não</button>
+              <button style={styles.confirmYes} onClick={() => { onDelete(bill.id); setConfirm(false) }}>sim</button>
+            </div>
           </div>
-        </div>
-      ) : (
-        <button style={styles.deleteBtn} onClick={() => setConfirm(true)}>
-          remover conta
-        </button>
+        ) : (
+          <button style={styles.deleteBtn} onClick={() => setConfirm(true)}>
+            remover conta
+          </button>
+        )
+      )}
+
+      {payConfirm && (
+        <PayConfirmModal
+          bill={bill}
+          paidBy={payConfirm}
+          onConfirm={(bill, paidBy, amount) => onPay(bill, paidBy, amount)}
+          onClose={() => setPayConfirm(null)}
+        />
       )}
     </div>
   )
@@ -151,14 +161,6 @@ const styles = {
   paidBy: {
     fontSize: '13px',
     color: 'var(--text-muted)',
-  },
-  undoBtn: {
-    background: 'rgba(255,255,255,0.6)',
-    color: 'var(--text-dim)',
-    fontSize: '12px',
-    padding: '4px 10px',
-    borderRadius: '8px',
-    border: '1px solid rgba(0,0,0,0.08)',
   },
   actions: {
     display: 'flex',
