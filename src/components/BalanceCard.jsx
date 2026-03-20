@@ -69,8 +69,10 @@ export default function BalanceCard({ payments }) {
 
 const styles = {
   card: {
-    background: 'white',
-    border: '1px solid var(--border)',
+    background: 'rgba(255,255,255,0.75)',
+    backdropFilter: 'blur(12px)',
+    WebkitBackdropFilter: 'blur(12px)',
+    border: '1px solid rgba(255,255,255,0.5)',
     borderRadius: 'var(--radius)',
     padding: '20px',
     display: 'flex',
