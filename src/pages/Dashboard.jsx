@@ -162,18 +162,20 @@ const styles = {
     flexDirection: 'column',
     background: 'linear-gradient(160deg, #f0f4f8 0%, #e8eef5 50%, #dde6f0 100%)',
   },
-  header: {
+ header: {
     display: 'flex',
     justifyContent: 'space-between',
     alignItems: 'center',
     padding: '16px 20px',
-    borderBottom: '1px solid var(--border)',
+    borderBottom: '1px solid rgba(255,255,255,0.3)',
     position: 'sticky',
     top: 0,
-    background: 'rgba(240,244,248,0.85)',
-    backdropFilter: 'blur(12px)',
+    background: 'rgba(255,255,255,0.6)',
+    backdropFilter: 'blur(16px)',
+    WebkitBackdropFilter: 'blur(16px)',
     zIndex: 10,
   },
+  
   headerLeft: {
     display: 'flex',
     alignItems: 'center',
@@ -215,9 +217,12 @@ const styles = {
     alignItems: 'center',
     justifyContent: 'space-between',
     padding: '16px 20px',
-    borderBottom: '1px solid var(--border)',
-    background: 'rgba(240,244,248,0.6)',
+    borderBottom: '1px solid rgba(255,255,255,0.3)',
+    background: 'rgba(255,255,255,0.4)',
+    backdropFilter: 'blur(12px)',
+    WebkitBackdropFilter: 'blur(12px)',
   },
+  
   navBtn: {
     background: 'white',
     color: 'var(--text-muted)',
