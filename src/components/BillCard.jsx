@@ -1,0 +1,218 @@
+import { useState } from 'react'
+
+export default function BillCard({ bill, payment, onPay, onUndoPay, onDelete, currentUser }) {
+  const [confirm, setConfirm] = useState(false)
+  const isPaid = !!payment
+
+  return (
+    <div style={{...styles.card, ...(isPaid ? styles.cardPaid : {})}} className="fade-up">
+      <div style={styles.top}>
+        <div style={styles.info}>
+          <div style={styles.nameRow}>
+            <span style={styles.name}>{bill.name}</span>
+            {isPaid && <span style={styles.badge}>pago</span>}
+          </div>
+          <span style={styles.due}>vence dia {bill.day_of_month}</span>
+        </div>
+        <div style={styles.right}>
+          <span style={styles.amount}>R$ {Number(bill.amount).toFixed(2)}</span>
+          <span style={styles.split}>R$ {(Number(bill.amount) / 2).toFixed(2)} cada</span>
+        </div>
+      </div>
+
+      <div style={styles.separator} />
+
+      {isPaid ? (
+        <div style={styles.paidRow}>
+          <span style={styles.paidBy}>
+            pago por{' '}
+            <span style={{color: payment.paid_by === 'Everson' ? 'var(--everson)' : 'var(--claudia)', fontWeight: 600}}>
+              {payment.paid_by}
+            </span>
+          </span>
+          <button style={styles.undoBtn} onClick={() => onUndoPay(payment.id)}>
+            desfazer
+          </button>
+        </div>
+      ) : (
+        <div style={styles.actions}>
+          <button
+            style={{...styles.payBtn, ...styles.payEverson}}
+            onClick={() => onPay(bill, 'Everson')}
+          >
+            Everson pagou
+          </button>
+          <button
+            style={{...styles.payBtn, ...styles.payClaudia}}
+            onClick={() => onPay(bill, 'Claudia')}
+          >
+            Claudia pagou
+          </button>
+        </div>
+      )}
+
+      {confirm ? (
+        <div style={styles.confirmRow}>
+          <span style={styles.confirmText}>Remover esta conta?</span>
+          <div style={styles.confirmBtns}>
+            <button style={styles.confirmNo} onClick={() => setConfirm(false)}>não</button>
+            <button style={styles.confirmYes} onClick={() => { onDelete(bill.id); setConfirm(false) }}>sim</button>
+          </div>
+        </div>
+      ) : (
+        <button style={styles.deleteBtn} onClick={() => setConfirm(true)}>
+          remover conta
+        </button>
+      )}
+    </div>
+  )
+}
+
+const styles = {
+  card: {
+    background: 'var(--bg-card)',
+    border: '1px solid var(--border)',
+    borderRadius: 'var(--radius)',
+    padding: '16px',
+    display: 'flex',
+    flexDirection: 'column',
+    gap: '12px',
+    transition: 'border-color 0.2s ease',
+  },
+  cardPaid: {
+    borderColor: 'rgba(200,255,0,0.15)',
+  },
+  top: {
+    display: 'flex',
+    justifyContent: 'space-between',
+    alignItems: 'flex-start',
+    gap: '12px',
+  },
+  info: {
+    flex: 1,
+    display: 'flex',
+    flexDirection: 'column',
+    gap: '4px',
+  },
+  nameRow: {
+    display: 'flex',
+    alignItems: 'center',
+    gap: '8px',
+  },
+  name: {
+    fontSize: '15px',
+    fontWeight: '500',
+    color: 'var(--text)',
+  },
+  badge: {
+    fontSize: '10px',
+    fontWeight: '500',
+    color: 'var(--accent)',
+    background: 'var(--accent-dim)',
+    padding: '2px 8px',
+    borderRadius: '20px',
+    letterSpacing: '0.5px',
+    fontFamily: 'var(--font-mono)',
+  },
+  due: {
+    fontSize: '12px',
+    color: 'var(--text-muted)',
+  },
+  right: {
+    display: 'flex',
+    flexDirection: 'column',
+    alignItems: 'flex-end',
+    gap: '4px',
+  },
+  amount: {
+    fontSize: '17px',
+    fontWeight: '500',
+    color: 'var(--text)',
+    fontFamily: 'var(--font-mono)',
+  },
+  split: {
+    fontSize: '11px',
+    color: 'var(--text-dim)',
+    fontFamily: 'var(--font-mono)',
+  },
+  separator: {
+    height: '1px',
+    background: 'var(--border)',
+  },
+  paidRow: {
+    display: 'flex',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+  },
+  paidBy: {
+    fontSize: '13px',
+    color: 'var(--text-muted)',
+  },
+  undoBtn: {
+    background: 'none',
+    color: 'var(--text-dim)',
+    fontSize: '12px',
+    padding: '4px 8px',
+    borderRadius: '8px',
+    border: '1px solid var(--border)',
+  },
+  actions: {
+    display: 'flex',
+    gap: '8px',
+  },
+  payBtn: {
+    flex: 1,
+    padding: '10px',
+    borderRadius: 'var(--radius-sm)',
+    fontSize: '13px',
+    fontWeight: '500',
+    border: '1px solid transparent',
+  },
+  payEverson: {
+    background: 'rgba(124,158,255,0.1)',
+    color: 'var(--everson)',
+    borderColor: 'rgba(124,158,255,0.2)',
+  },
+  payClaudia: {
+    background: 'rgba(255,126,179,0.1)',
+    color: 'var(--claudia)',
+    borderColor: 'rgba(255,126,179,0.2)',
+  },
+  deleteBtn: {
+    background: 'none',
+    color: 'var(--text-dim)',
+    fontSize: '11px',
+    padding: '0',
+    textAlign: 'left',
+    letterSpacing: '0.3px',
+  },
+  confirmRow: {
+    display: 'flex',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+  },
+  confirmText: {
+    fontSize: '12px',
+    color: 'var(--text-muted)',
+  },
+  confirmBtns: {
+    display: 'flex',
+    gap: '8px',
+  },
+  confirmNo: {
+    background: 'var(--bg-hover)',
+    color: 'var(--text-muted)',
+    fontSize: '12px',
+    padding: '4px 12px',
+    borderRadius: '8px',
+    border: '1px solid var(--border)',
+  },
+  confirmYes: {
+    background: 'rgba(255,68,68,0.1)',
+    color: 'var(--danger)',
+    fontSize: '12px',
+    padding: '4px 12px',
+    borderRadius: '8px',
+    border: '1px solid rgba(255,68,68,0.2)',
+  },
+}
