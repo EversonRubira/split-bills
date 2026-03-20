@@ -43,7 +43,9 @@ export default function PinScreen({ onLogin }) {
   return (
     <div style={styles.container} className="fade-in">
       <div style={styles.top}>
-        <div style={styles.logo}>₂</div>
+        <div style={styles.logoWrap}>
+          <div style={styles.logo}>₂</div>
+        </div>
         <h1 style={styles.title}>Split Bills</h1>
         <p style={styles.subtitle}>Controle financeiro do casal</p>
       </div>
@@ -87,6 +89,7 @@ const styles = {
     justifyContent: 'center',
     padding: '40px 24px',
     gap: '48px',
+    background: 'linear-gradient(160deg, #f0f4f8 0%, #e8eef5 50%, #dde6f0 100%)',
   },
   top: {
     textAlign: 'center',
@@ -95,28 +98,33 @@ const styles = {
     alignItems: 'center',
     gap: '8px',
   },
+  logoWrap: {
+    padding: '4px',
+    background: 'linear-gradient(135deg, #2563eb22, #2563eb44)',
+    borderRadius: '24px',
+    marginBottom: '8px',
+  },
   logo: {
     width: '64px',
     height: '64px',
-    background: '#1a1a1a',
-    border: '1px solid #2a2a2a',
-    borderRadius: '18px',
+    background: 'linear-gradient(135deg, #2563eb, #1d4ed8)',
+    borderRadius: '20px',
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'center',
     fontSize: '28px',
-    marginBottom: '8px',
-    color: '#c8ff00',
+    color: 'white',
+    boxShadow: '0 8px 24px rgba(37,99,235,0.3)',
   },
   title: {
-    fontSize: '24px',
+    fontSize: '26px',
     fontWeight: '600',
     letterSpacing: '-0.5px',
-    color: '#f0f0f0',
+    color: '#1a2332',
   },
   subtitle: {
     fontSize: '14px',
-    color: '#666',
+    color: '#64748b',
     fontWeight: '300',
   },
   dots: {
@@ -130,16 +138,19 @@ const styles = {
     width: '14px',
     height: '14px',
     borderRadius: '50%',
-    border: '2px solid #333',
+    border: '2px solid #cbd5e1',
+    background: 'white',
     transition: 'all 0.15s ease',
+    boxShadow: '0 2px 4px rgba(0,0,0,0.06)',
   },
   dotFilled: {
-    background: '#c8ff00',
-    borderColor: '#c8ff00',
+    background: '#2563eb',
+    borderColor: '#2563eb',
+    boxShadow: '0 2px 8px rgba(37,99,235,0.4)',
   },
   dotError: {
-    borderColor: '#ff4444',
-    background: '#ff4444',
+    borderColor: '#ef4444',
+    background: '#ef4444',
   },
   keypad: {
     display: 'grid',
@@ -150,25 +161,25 @@ const styles = {
   },
   key: {
     height: '72px',
-    borderRadius: '16px',
-    background: '#1a1a1a',
-    border: '1px solid #2a2a2a',
-    color: '#f0f0f0',
+    borderRadius: '20px',
+    background: 'white',
+    border: '1px solid #e2e8f0',
+    color: '#1a2332',
     fontSize: '22px',
     fontWeight: '400',
     fontFamily: 'DM Sans, sans-serif',
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'center',
+    boxShadow: '0 2px 8px rgba(0,0,0,0.06)',
   },
   keyEmpty: {
     background: 'transparent',
     border: 'none',
+    boxShadow: 'none',
     cursor: 'default',
   },
   keyDelete: {
-    background: '#1a1a1a',
-    color: '#666',
+    background: 'white',
+    color: '#94a3b8',
     fontSize: '18px',
+    border: '1px solid #e2e8f0',
   },
 }
