@@ -55,7 +55,7 @@ export default function BalanceCard({ payments, bills = [] }) {
             }} />
           </div>
           <span style={{...styles.barValue, color: eversonDone ? 'var(--success)' : 'var(--everson)'}}>
-            {eversonDone ? '✓ quitado' : `R$ ${eversonRemaining.toFixed(2)}`}
+            R$ {fairShare.toFixed(2)}
           </span>
         </div>
 
@@ -77,7 +77,7 @@ export default function BalanceCard({ payments, bills = [] }) {
             }} />
           </div>
           <span style={{...styles.barValue, color: claudiaDone ? 'var(--success)' : 'var(--claudia)'}}>
-            {claudiaDone ? '✓ quitado' : `R$ ${claudiaRemaining.toFixed(2)}`}
+            R$ {fairShare.toFixed(2)}
           </span>
         </div>
 
