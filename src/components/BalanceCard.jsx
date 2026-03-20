@@ -7,19 +7,21 @@ export default function BalanceCard({ payments, bills = [] }) {
     .filter(p => p.paid_by === 'Claudia')
     .reduce((sum, p) => sum + Number(p.amount), 0)
 
-  const total = eversonPaid + claudiaPaid
   const totalBills = bills.reduce((sum, b) => sum + Number(b.amount), 0)
-  const fairShare = total / 2
+  const fairShare = totalBills / 2
+
   const diff = eversonPaid - fairShare
   const amount = Math.abs(diff)
   const debtor = diff > 0 ? 'Claudia' : 'Everson'
   const creditor = diff > 0 ? 'Everson' : 'Claudia'
   const balanced = amount < 0.01
 
-  const maxValue = Math.max(eversonPaid, claudiaPaid, fairShare, 1)
-  const eversonPct = Math.min((eversonPaid / maxValue) * 100, 100)
-  const claudiaPct = Math.min((claudiaPaid / maxValue) * 100, 100)
-  const fairPct = Math.min((fairShare / maxValue) * 100, 100)
+  const eversonPct = fairShare > 0 ? Math.min((eversonPaid / fairShare) * 100, 100) : 0
+  const claudiaPct = fairShare > 0 ? Math.min((claudiaPaid / fairShare) * 100, 100) : 0
+  const eversonDone = fairShare > 0 && eversonPaid >= fairShare - 0.01
+  const claudiaDone = fairShare > 0 && claudiaPaid >= fairShare - 0.01
+
+  const total = eversonPaid + claudiaPaid
 
   return (
     <div style={styles.card} className="fade-up">
@@ -41,18 +43,21 @@ export default function BalanceCard({ payments, bills = [] }) {
             </div>
             <span style={styles.barName}>Everson</span>
           </div>
-          <div style={styles.barTrack}>
+          <div style={{
+            ...styles.barTrack,
+            background: eversonDone ? 'rgba(37,99,235,0.12)' : 'rgba(0,0,0,0.06)',
+          }}>
             <div style={{
               ...styles.barFill,
               width: `${eversonPct}%`,
-              background: 'linear-gradient(90deg, #2563eb, #60a5fa)',
+              background: eversonDone
+                ? 'linear-gradient(90deg, #2563eb, #60a5fa)'
+                : 'linear-gradient(90deg, #93c5fd, #bfdbfe)',
             }} />
-            {fairShare > 0 && (
-              <div style={{...styles.fairLine, left: `${fairPct}%`}} />
-            )}
           </div>
-          <span style={{...styles.barValue, color: 'var(--everson)'}}>
+          <span style={{...styles.barValue, color: eversonDone ? 'var(--everson)' : 'var(--text-dim)'}}>
             R$ {eversonPaid.toFixed(2)}
+            {eversonDone && <span style={styles.checkMark}> ✓</span>}
           </span>
         </div>
 
@@ -64,26 +69,29 @@ export default function BalanceCard({ payments, bills = [] }) {
             </div>
             <span style={styles.barName}>Claudia</span>
           </div>
-          <div style={styles.barTrack}>
+          <div style={{
+            ...styles.barTrack,
+            background: claudiaDone ? 'rgba(219,39,119,0.12)' : 'rgba(0,0,0,0.06)',
+          }}>
             <div style={{
               ...styles.barFill,
               width: `${claudiaPct}%`,
-              background: 'linear-gradient(90deg, #db2777, #f472b6)',
+              background: claudiaDone
+                ? 'linear-gradient(90deg, #db2777, #f472b6)'
+                : 'linear-gradient(90deg, #f9a8d4, #fce7f3)',
             }} />
-            {fairShare > 0 && (
-              <div style={{...styles.fairLine, left: `${fairPct}%`}} />
-            )}
           </div>
-          <span style={{...styles.barValue, color: 'var(--claudia)'}}>
+          <span style={{...styles.barValue, color: claudiaDone ? 'var(--claudia)' : 'var(--text-dim)'}}>
             R$ {claudiaPaid.toFixed(2)}
+            {claudiaDone && <span style={styles.checkMark}> ✓</span>}
           </span>
         </div>
 
-        {/* Legenda linha justa */}
+        {/* Meta por pessoa */}
         {fairShare > 0 && (
           <div style={styles.fairLegend}>
             <div style={styles.fairDash} />
-            <span style={styles.fairText}>R$ {fairShare.toFixed(2)} justo</span>
+            <span style={styles.fairText}>meta: R$ {fairShare.toFixed(2)} cada</span>
             <div style={styles.fairDash} />
           </div>
         )}
@@ -91,7 +99,9 @@ export default function BalanceCard({ payments, bills = [] }) {
 
       <div style={styles.separator} />
 
-      {total === 0 ? (
+      {totalBills === 0 ? (
+        <p style={styles.balanced}>Nenhuma conta cadastrada</p>
+      ) : total === 0 ? (
         <p style={styles.balanced}>Nenhum pagamento este mês</p>
       ) : balanced ? (
         <p style={styles.balanced}>✦ Tudo equilibrado</p>
@@ -183,25 +193,28 @@ const styles = {
   barTrack: {
     flex: 1,
     height: '10px',
-    background: 'rgba(0,0,0,0.06)',
     borderRadius: '20px',
-    overflow: 'visible',
+    overflow: 'hidden',
     position: 'relative',
+    transition: 'background 0.4s ease',
   },
   barFill: {
     height: '100%',
     borderRadius: '20px',
-    transition: 'width 0.6s ease',
+    transition: 'width 0.6s ease, background 0.4s ease',
     minWidth: '4px',
   },
-  fairLine: {
-    position: 'absolute',
-    top: '-4px',
-    width: '2px',
-    height: '18px',
-    background: 'rgba(0,0,0,0.2)',
-    borderRadius: '2px',
-    transform: 'translateX(-1px)',
+  barValue: {
+    fontSize: '11px',
+    fontWeight: '600',
+    fontFamily: 'var(--font-mono)',
+    whiteSpace: 'nowrap',
+    minWidth: '80px',
+    textAlign: 'right',
+    transition: 'color 0.4s ease',
+  },
+  checkMark: {
+    color: 'var(--success)',
   },
   fairLegend: {
     display: 'flex',
