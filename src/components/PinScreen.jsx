@@ -1,7 +1,7 @@
 import { useState } from 'react'
 
 const PINS = {
-  'XXXX': 'Everson',
+  '1234': 'Everson',
   'YYYY': 'Claudia',
 }
 
