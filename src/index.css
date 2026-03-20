@@ -43,6 +43,21 @@ html, body {
   max-width: 430px;
   margin: 0 auto;
   background: var(--bg);
+  position: relative;
+}
+
+#root::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  max-width: 430px;
+  margin: 0 auto;
+  background-image: url('https://images.unsplash.com/photo-1579621970795-87facc2f976d?q=80&w=1170&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D');
+  background-size: cover;
+  background-position: center;
+  opacity: 0.08;
+  z-index: 0;
+  pointer-events: none;
 }
 
 button {
