@@ -90,7 +90,7 @@ export default function PinScreen({ onLogin }) {
     <div style={styles.container} className="fade-in">
       <div style={styles.top}>
         <div style={styles.logoWrap}>
-          <div style={styles.logo}>₂</div>
+          <div style={styles.logo}>💰</div>
         </div>
         <h1 style={styles.title}>{getTitle()}</h1>
         <p style={styles.subtitle}>{getSubtitle()}</p>
