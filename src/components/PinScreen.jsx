@@ -1,8 +1,8 @@
 import { useState } from 'react'
 
 const PINS = {
-  '1234': 'Everson',
-  '5678': 'Claudia',
+  'XXXX': 'Everson',
+  'YYYY': 'Claudia',
 }
 
 export default function PinScreen({ onLogin }) {
