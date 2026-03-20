@@ -1,6 +1,6 @@
 import { useState } from 'react'
 
-export default function BillCard({ bill, payment, onPay, onUndoPay, onDelete, currentUser }) {
+export default function BillCard({ bill, payment, onPay, onUndoPay, onDelete }) {
   const [confirm, setConfirm] = useState(false)
   const isPaid = !!payment
 
@@ -70,17 +70,19 @@ export default function BillCard({ bill, payment, onPay, onUndoPay, onDelete, cu
 
 const styles = {
   card: {
-    background: 'var(--bg-card)',
+    background: 'white',
     border: '1px solid var(--border)',
     borderRadius: 'var(--radius)',
     padding: '16px',
     display: 'flex',
     flexDirection: 'column',
     gap: '12px',
-    transition: 'border-color 0.2s ease',
+    boxShadow: 'var(--shadow)',
+    transition: 'all 0.2s ease',
   },
   cardPaid: {
-    borderColor: 'rgba(200,255,0,0.15)',
+    borderColor: 'rgba(16,185,129,0.2)',
+    background: '#f0fdf8',
   },
   top: {
     display: 'flex',
@@ -106,9 +108,9 @@ const styles = {
   },
   badge: {
     fontSize: '10px',
-    fontWeight: '500',
-    color: 'var(--accent)',
-    background: 'var(--accent-dim)',
+    fontWeight: '600',
+    color: 'var(--success)',
+    background: 'rgba(16,185,129,0.1)',
     padding: '2px 8px',
     borderRadius: '20px',
     letterSpacing: '0.5px',
@@ -126,7 +128,7 @@ const styles = {
   },
   amount: {
     fontSize: '17px',
-    fontWeight: '500',
+    fontWeight: '600',
     color: 'var(--text)',
     fontFamily: 'var(--font-mono)',
   },
@@ -152,7 +154,7 @@ const styles = {
     background: 'none',
     color: 'var(--text-dim)',
     fontSize: '12px',
-    padding: '4px 8px',
+    padding: '4px 10px',
     borderRadius: '8px',
     border: '1px solid var(--border)',
   },
@@ -162,21 +164,21 @@ const styles = {
   },
   payBtn: {
     flex: 1,
-    padding: '10px',
+    padding: '11px',
     borderRadius: 'var(--radius-sm)',
     fontSize: '13px',
     fontWeight: '500',
     border: '1px solid transparent',
   },
   payEverson: {
-    background: 'rgba(124,158,255,0.1)',
+    background: 'rgba(37,99,235,0.06)',
     color: 'var(--everson)',
-    borderColor: 'rgba(124,158,255,0.2)',
+    borderColor: 'rgba(37,99,235,0.15)',
   },
   payClaudia: {
-    background: 'rgba(255,126,179,0.1)',
+    background: 'rgba(219,39,119,0.06)',
     color: 'var(--claudia)',
-    borderColor: 'rgba(255,126,179,0.2)',
+    borderColor: 'rgba(219,39,119,0.15)',
   },
   deleteBtn: {
     background: 'none',
@@ -208,11 +210,11 @@ const styles = {
     border: '1px solid var(--border)',
   },
   confirmYes: {
-    background: 'rgba(255,68,68,0.1)',
+    background: 'rgba(239,68,68,0.08)',
     color: 'var(--danger)',
     fontSize: '12px',
     padding: '4px 12px',
     borderRadius: '8px',
-    border: '1px solid rgba(255,68,68,0.2)',
+    border: '1px solid rgba(239,68,68,0.15)',
   },
 }
