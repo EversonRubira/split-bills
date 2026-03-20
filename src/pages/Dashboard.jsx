@@ -129,7 +129,7 @@ export default function Dashboard({ user, onLogout }) {
           </div>
         ) : activeBills.length === 0 ? (
           <div style={styles.empty}>
-            <p style={styles.emptyIcon}>₂</p>
+            <p style={styles.emptyIcon}>💰</p>
             <p style={styles.emptyText}>Nenhuma conta cadastrada</p>
             <p style={styles.emptySubtext}>Adicione uma conta para começar</p>
           </div>
