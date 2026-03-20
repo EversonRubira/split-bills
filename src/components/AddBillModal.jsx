@@ -94,7 +94,7 @@ export default function AddBillModal({ onAdd, onClose }) {
 }
 
 const styles = {
-  overlay: {
+ overlay: {
     position: 'fixed',
     inset: 0,
     background: 'rgba(15,23,42,0.4)',
@@ -102,8 +102,9 @@ const styles = {
     display: 'flex',
     alignItems: 'flex-end',
     zIndex: 100,
+    paddingBottom: 'env(keyboard-inset-height, 0px)',
   },
-  modal: {
+modal: {
     width: '100%',
     maxWidth: '430px',
     margin: '0 auto',
@@ -116,6 +117,8 @@ const styles = {
     flexDirection: 'column',
     gap: '16px',
     boxShadow: '0 -8px 32px rgba(0,0,0,0.08)',
+    maxHeight: '90vh',
+    overflowY: 'auto',
   },
   handle: {
     width: '36px',
