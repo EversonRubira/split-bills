@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 
 export default function AddBillModal({ onAdd, onClose }) {
   const [name, setName] = useState('')
@@ -6,6 +6,19 @@ export default function AddBillModal({ onAdd, onClose }) {
   const [day, setDay] = useState('1')
   const [endDate, setEndDate] = useState('')
   const [loading, setLoading] = useState(false)
+
+  useEffect(() => {
+    const handler = () => {
+      const viewport = window.visualViewport
+      if (viewport) {
+        const offset = window.innerHeight - viewport.height
+        const modal = document.querySelector('#modal-inner')
+        if (modal) modal.style.transform = `translateY(-${offset}px)`
+      }
+    }
+    window.visualViewport?.addEventListener('resize', handler)
+    return () => window.visualViewport?.removeEventListener('resize', handler)
+  }, [])
 
   const handleSubmit = async (e) => {
     e.preventDefault()
@@ -23,7 +36,7 @@ export default function AddBillModal({ onAdd, onClose }) {
 
   return (
     <div style={styles.overlay} className="fade-in" onClick={e => e.target === e.currentTarget && onClose()}>
-      <div style={styles.modal} className="fade-up">
+      <div style={styles.modal} className="fade-up" id="modal-inner">
         <div style={styles.handle} />
 
         <h2 style={styles.title}>Nova conta</h2>
@@ -94,7 +107,7 @@ export default function AddBillModal({ onAdd, onClose }) {
 }
 
 const styles = {
- overlay: {
+  overlay: {
     position: 'fixed',
     inset: 0,
     background: 'rgba(15,23,42,0.4)',
@@ -102,9 +115,8 @@ const styles = {
     display: 'flex',
     alignItems: 'flex-end',
     zIndex: 100,
-    paddingBottom: 'env(keyboard-inset-height, 0px)',
   },
-modal: {
+  modal: {
     width: '100%',
     maxWidth: '430px',
     margin: '0 auto',
@@ -119,6 +131,7 @@ modal: {
     boxShadow: '0 -8px 32px rgba(0,0,0,0.08)',
     maxHeight: '90vh',
     overflowY: 'auto',
+    transition: 'transform 0.3s ease',
   },
   handle: {
     width: '36px',
