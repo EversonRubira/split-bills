@@ -17,10 +17,18 @@ export default function BalanceCard({ payments }) {
 
   return (
     <div style={styles.card} className="fade-up">
-      <p style={styles.label}>SALDO GERAL</p>
+      <div style={styles.header}>
+        <p style={styles.label}>SALDO GERAL</p>
+        <div style={styles.totalBadge}>
+          <span style={styles.totalText}>Total: R$ {total.toFixed(2)}</span>
+        </div>
+      </div>
 
       <div style={styles.row}>
         <div style={styles.person}>
+          <div style={{...styles.dot, background: 'rgba(37,99,235,0.1)'}}>
+            <span style={{color: 'var(--everson)', fontSize: '12px', fontWeight: '600'}}>E</span>
+          </div>
           <span style={styles.name}>Everson</span>
           <span style={{...styles.amount, color: 'var(--everson)'}}>
             R$ {eversonPaid.toFixed(2)}
@@ -28,6 +36,9 @@ export default function BalanceCard({ payments }) {
         </div>
         <div style={styles.divider} />
         <div style={{...styles.person, alignItems: 'flex-end'}}>
+          <div style={{...styles.dot, background: 'rgba(219,39,119,0.1)'}}>
+            <span style={{color: 'var(--claudia)', fontSize: '12px', fontWeight: '600'}}>C</span>
+          </div>
           <span style={styles.name}>Claudia</span>
           <span style={{...styles.amount, color: 'var(--claudia)'}}>
             R$ {claudiaPaid.toFixed(2)}
@@ -58,19 +69,36 @@ export default function BalanceCard({ payments }) {
 
 const styles = {
   card: {
-    background: 'var(--bg-card)',
+    background: 'white',
     border: '1px solid var(--border)',
     borderRadius: 'var(--radius)',
     padding: '20px',
     display: 'flex',
     flexDirection: 'column',
     gap: '16px',
+    boxShadow: 'var(--shadow)',
+  },
+  header: {
+    display: 'flex',
+    justifyContent: 'space-between',
+    alignItems: 'center',
   },
   label: {
     fontSize: '10px',
-    fontWeight: '500',
+    fontWeight: '600',
     color: 'var(--text-dim)',
     letterSpacing: '1.5px',
+    fontFamily: 'var(--font-mono)',
+  },
+  totalBadge: {
+    background: 'var(--accent-light)',
+    padding: '4px 10px',
+    borderRadius: '20px',
+  },
+  totalText: {
+    fontSize: '11px',
+    color: 'var(--accent)',
+    fontWeight: '600',
     fontFamily: 'var(--font-mono)',
   },
   row: {
@@ -82,7 +110,15 @@ const styles = {
     flex: 1,
     display: 'flex',
     flexDirection: 'column',
-    gap: '4px',
+    gap: '6px',
+  },
+  dot: {
+    width: '28px',
+    height: '28px',
+    borderRadius: '50%',
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
   },
   name: {
     fontSize: '12px',
@@ -97,7 +133,7 @@ const styles = {
   },
   divider: {
     width: '1px',
-    height: '40px',
+    height: '60px',
     background: 'var(--border)',
   },
   separator: {
@@ -106,7 +142,7 @@ const styles = {
   },
   balanced: {
     textAlign: 'center',
-    color: 'var(--accent)',
+    color: 'var(--success)',
     fontSize: '13px',
     fontWeight: '500',
     letterSpacing: '0.5px',
