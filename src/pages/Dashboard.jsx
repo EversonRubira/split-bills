@@ -55,11 +55,11 @@ export default function Dashboard({ user, onLogout }) {
     if (data) setBills(prev => [...prev, data].sort((a,b) => a.name.localeCompare(b.name)))
   }
 
-  const handlePay = async (bill, paidBy) => {
+ const handlePay = async (bill, paidBy, amount) => {
     const { data } = await supabase.from('payments').insert({
       bill_id: bill.id,
       bill_name: bill.name,
-      amount: bill.amount,
+      amount: amount,
       paid_by: paidBy,
       month,
       year,
