@@ -97,7 +97,7 @@ export default function Dashboard({ user, onLogout }) {
     <div style={styles.container}>
       <header style={styles.header}>
         <div style={styles.headerLeft}>
-          <span style={styles.logo}>₂</span>
+          <span style={styles.logo}>💰</span>
           <div>
             <p style={styles.headerTitle}>Split Bills</p>
             <p style={styles.headerUser}>{user}</p>
