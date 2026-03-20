@@ -71,7 +71,7 @@ export default function PinScreen({ onLogin }) {
   const keys = ['1','2','3','4','5','6','7','8','9','','0','⌫']
 
   const getTitle = () => {
-    if (mode === 'setup_name') return 'Quem és tu?'
+    if (mode === 'setup_name') return 'Quem és tu? O Everson ou a Chata?'
     if (mode === 'setup_pin') return `Olá, ${userName}! Cria o teu PIN`
     if (mode === 'confirm_pin') return 'Confirma o PIN'
     return 'Bem-vindo de volta'
