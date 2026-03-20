@@ -1,14 +1,22 @@
-import { useState } from 'react'
-
-const PINS = {
-  '1234': 'Everson',
-  'YYYY': 'Claudia',
-}
+import { useState, useEffect } from 'react'
 
 export default function PinScreen({ onLogin }) {
   const [pin, setPin] = useState('')
   const [error, setError] = useState(false)
   const [shake, setShake] = useState(false)
+  const [mode, setMode] = useState('loading')
+  const [userName, setUserName] = useState(null)
+  const [newPin, setNewPin] = useState('')
+
+  useEffect(() => {
+    const eversonPin = localStorage.getItem('pin_Everson')
+    const claudiaPin = localStorage.getItem('pin_Claudia')
+    if (!eversonPin && !claudiaPin) {
+      setMode('setup_name')
+    } else {
+      setMode('login')
+    }
+  }, [])
 
   const handleKey = (key) => {
     if (pin.length >= 4) return
@@ -18,16 +26,33 @@ export default function PinScreen({ onLogin }) {
 
     if (next.length === 4) {
       setTimeout(() => {
-        const user = PINS[next]
-        if (user) {
-          onLogin(user)
-        } else {
+        if (mode === 'setup_pin') {
+          setNewPin(next)
+          setPin('')
+          setMode('confirm_pin')
+          return
+        }
+
+        if (mode === 'confirm_pin') {
+          if (next === newPin) {
+            localStorage.setItem(`pin_${userName}`, next)
+            onLogin(userName)
+          } else {
+            setShake(true)
+            setError(true)
+            setTimeout(() => { setPin(''); setShake(false) }, 600)
+          }
+          return
+        }
+
+        if (mode === 'login') {
+          const eversonPin = localStorage.getItem('pin_Everson')
+          const claudiaPin = localStorage.getItem('pin_Claudia')
+          if (next === eversonPin) return onLogin('Everson')
+          if (next === claudiaPin) return onLogin('Claudia')
           setShake(true)
           setError(true)
-          setTimeout(() => {
-            setPin('')
-            setShake(false)
-          }, 600)
+          setTimeout(() => { setPin(''); setShake(false) }, 600)
         }
       }, 100)
     }
@@ -38,7 +63,28 @@ export default function PinScreen({ onLogin }) {
     setError(false)
   }
 
+  const handleSelectName = (name) => {
+    setUserName(name)
+    setMode('setup_pin')
+  }
+
   const keys = ['1','2','3','4','5','6','7','8','9','','0','⌫']
+
+  const getTitle = () => {
+    if (mode === 'setup_name') return 'Quem és tu?'
+    if (mode === 'setup_pin') return `Olá, ${userName}! Cria o teu PIN`
+    if (mode === 'confirm_pin') return 'Confirma o PIN'
+    return 'Bem-vindo de volta'
+  }
+
+  const getSubtitle = () => {
+    if (mode === 'setup_name') return 'Primeira configuração'
+    if (mode === 'setup_pin') return 'Define um PIN de 4 dígitos'
+    if (mode === 'confirm_pin') return 'Repete o PIN para confirmar'
+    return 'Introduz o teu PIN'
+  }
+
+  if (mode === 'loading') return null
 
   return (
     <div style={styles.container} className="fade-in">
@@ -46,36 +92,57 @@ export default function PinScreen({ onLogin }) {
         <div style={styles.logoWrap}>
           <div style={styles.logo}>₂</div>
         </div>
-        <h1 style={styles.title}>Split Bills</h1>
-        <p style={styles.subtitle}>Controle financeiro do casal</p>
+        <h1 style={styles.title}>{getTitle()}</h1>
+        <p style={styles.subtitle}>{getSubtitle()}</p>
       </div>
 
-      <div style={{...styles.dots, ...(shake ? styles.shake : {})}}>
-        {[0,1,2,3].map(i => (
-          <div key={i} style={{
-            ...styles.dot,
-            ...(i < pin.length ? styles.dotFilled : {}),
-            ...(error ? styles.dotError : {}),
-          }} />
-        ))}
-      </div>
-
-      <div style={styles.keypad}>
-        {keys.map((key, i) => (
-          <button
-            key={i}
-            style={{
-              ...styles.key,
-              ...(key === '' ? styles.keyEmpty : {}),
-              ...(key === '⌫' ? styles.keyDelete : {}),
-            }}
-            onClick={() => key === '⌫' ? handleDelete() : key !== '' ? handleKey(key) : null}
-            disabled={key === ''}
-          >
-            {key}
+      {mode === 'setup_name' ? (
+        <div style={styles.nameButtons}>
+          <button style={styles.nameBtn} onClick={() => handleSelectName('Everson')}>
+            <span style={styles.nameInitial}>E</span>
+            <span style={styles.nameBtnText}>Everson</span>
           </button>
-        ))}
-      </div>
+          <button style={{...styles.nameBtn, ...styles.nameBtnClaudia}} onClick={() => handleSelectName('Claudia')}>
+            <span style={{...styles.nameInitial, color: 'var(--claudia)'}}>C</span>
+            <span style={styles.nameBtnText}>Claudia</span>
+          </button>
+        </div>
+      ) : (
+        <>
+          <div style={{...styles.dots, ...(shake ? styles.shake : {})}}>
+            {[0,1,2,3].map(i => (
+              <div key={i} style={{
+                ...styles.dot,
+                ...(i < pin.length ? styles.dotFilled : {}),
+                ...(error ? styles.dotError : {}),
+              }} />
+            ))}
+          </div>
+
+          <div style={styles.keypad}>
+            {keys.map((key, i) => (
+              <button
+                key={i}
+                style={{
+                  ...styles.key,
+                  ...(key === '' ? styles.keyEmpty : {}),
+                  ...(key === '⌫' ? styles.keyDelete : {}),
+                }}
+                onClick={() => key === '⌫' ? handleDelete() : key !== '' ? handleKey(key) : null}
+                disabled={key === ''}
+              >
+                {key}
+              </button>
+            ))}
+          </div>
+
+          {mode === 'login' && (
+            <button style={styles.resetBtn} onClick={() => setMode('setup_name')}>
+              Primeiro acesso / Redefinir PIN
+            </button>
+          )}
+        </>
+      )}
     </div>
   )
 }
@@ -126,6 +193,44 @@ const styles = {
     fontSize: '14px',
     color: '#64748b',
     fontWeight: '300',
+  },
+  nameButtons: {
+    display: 'flex',
+    flexDirection: 'column',
+    gap: '12px',
+    width: '100%',
+    maxWidth: '280px',
+  },
+  nameBtn: {
+    display: 'flex',
+    alignItems: 'center',
+    gap: '16px',
+    padding: '18px 24px',
+    borderRadius: '20px',
+    background: 'white',
+    border: '1px solid rgba(37,99,235,0.2)',
+    boxShadow: '0 2px 8px rgba(0,0,0,0.06)',
+    cursor: 'pointer',
+  },
+  nameBtnClaudia: {
+    border: '1px solid rgba(219,39,119,0.2)',
+  },
+  nameInitial: {
+    width: '36px',
+    height: '36px',
+    borderRadius: '50%',
+    background: 'rgba(37,99,235,0.08)',
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    fontSize: '16px',
+    fontWeight: '600',
+    color: 'var(--everson)',
+  },
+  nameBtnText: {
+    fontSize: '17px',
+    fontWeight: '500',
+    color: '#1a2332',
   },
   dots: {
     display: 'flex',
@@ -181,5 +286,13 @@ const styles = {
     color: '#94a3b8',
     fontSize: '18px',
     border: '1px solid #e2e8f0',
+  },
+  resetBtn: {
+    background: 'none',
+    color: '#94a3b8',
+    fontSize: '13px',
+    border: 'none',
+    textDecoration: 'underline',
+    cursor: 'pointer',
   },
 }
