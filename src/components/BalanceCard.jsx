@@ -18,8 +18,8 @@ export default function BalanceCard({ payments, bills = [] }) {
 
   const eversonRemaining = Math.max(fairShare - eversonPaid, 0)
   const claudiaRemaining = Math.max(fairShare - claudiaPaid, 0)
-  const eversonRemainingPct = fairShare > 0 ? (eversonRemaining / fairShare) * 100 : 0
-  const claudiaRemainingPct = fairShare > 0 ? (claudiaRemaining / fairShare) * 100 : 0
+  const eversonPaidPct = fairShare > 0 ? Math.min((eversonPaid / fairShare) * 100, 100) : 0
+  const claudiaPaidPct = fairShare > 0 ? Math.min((claudiaPaid / fairShare) * 100, 100) : 0
   const eversonDone = fairShare > 0 && eversonRemaining < 0.01
   const claudiaDone = fairShare > 0 && claudiaRemaining < 0.01
 
@@ -48,7 +48,7 @@ export default function BalanceCard({ payments, bills = [] }) {
           <div style={styles.barTrack}>
             <div style={{
               ...styles.barFill,
-              width: `${eversonRemainingPct}%`,
+              width: `${eversonPaidPct}%`,
               background: eversonDone
                 ? 'transparent'
                 : 'linear-gradient(90deg, #93c5fd, #2563eb)',
@@ -70,7 +70,7 @@ export default function BalanceCard({ payments, bills = [] }) {
           <div style={styles.barTrack}>
             <div style={{
               ...styles.barFill,
-              width: `${claudiaRemainingPct}%`,
+              width: `${claudiaPaidPct}%`,
               background: claudiaDone
                 ? 'transparent'
                 : 'linear-gradient(90deg, #f9a8d4, #db2777)',
@@ -85,7 +85,7 @@ export default function BalanceCard({ payments, bills = [] }) {
         {fairShare > 0 && (
           <div style={styles.fairLegend}>
             <div style={styles.fairDash} />
-            <span style={styles.fairText}>barra cheia = R$ {fairShare.toFixed(2)} a pagar</span>
+            <span style={styles.fairText}>R$ {fairShare.toFixed(2)} cada</span>
             <div style={styles.fairDash} />
           </div>
         )}
