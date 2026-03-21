@@ -44,7 +44,7 @@ export default function BalanceCard({ payments, bills = [], transfers = [], onAd
       <div style={styles.header}>
         <p style={styles.label}>RESUMO DO MÊS</p>
         <div style={styles.totalBadge}>
-          <span style={styles.totalText}>Total: R$ {totalBills.toFixed(2)}</span>
+          <span style={styles.totalText}>Total: € {totalBills.toFixed(2)}</span>
         </div>
       </div>
 
@@ -70,7 +70,7 @@ export default function BalanceCard({ payments, bills = [], transfers = [], onAd
             <div style={styles.fairMark} />
           </div>
           <span style={{...styles.barValue, color: eversonDone ? 'var(--success)' : 'var(--everson)'}}>
-            R$ {eversonPaid.toFixed(2)}
+            € {eversonPaid.toFixed(2)}
           </span>
         </div>
 
@@ -93,7 +93,7 @@ export default function BalanceCard({ payments, bills = [], transfers = [], onAd
             <div style={styles.fairMark} />
           </div>
           <span style={{...styles.barValue, color: claudiaDone ? 'var(--success)' : 'var(--claudia)'}}>
-            R$ {claudiaPaid.toFixed(2)}
+            € {claudiaPaid.toFixed(2)}
           </span>
         </div>
 
@@ -113,7 +113,7 @@ export default function BalanceCard({ payments, bills = [], transfers = [], onAd
             {debtor}
           </span>
           {' deve '}
-          <span style={styles.oweAmount}>R$ {amount.toFixed(2)}</span>
+          <span style={styles.oweAmount}>€ {amount.toFixed(2)}</span>
           {' para '}
           <span style={{color: creditor === 'Everson' ? 'var(--everson)' : 'var(--claudia)', fontWeight: 600}}>
             {creditor}
@@ -144,7 +144,7 @@ export default function BalanceCard({ payments, bills = [], transfers = [], onAd
                 {t.note ? <span style={styles.transferNote}> · {t.note}</span> : null}
               </div>
               <div style={styles.transferRight}>
-                <span style={styles.transferAmount}>R$ {Number(t.amount).toFixed(2)}</span>
+                <span style={styles.transferAmount}>€ {Number(t.amount).toFixed(2)}</span>
                 <button style={styles.deleteTransfer} onClick={() => onDeleteTransfer(t.id)}>×</button>
               </div>
             </div>

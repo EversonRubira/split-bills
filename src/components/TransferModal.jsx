@@ -60,7 +60,7 @@ export default function TransferModal({ currentUser, onAdd, onClose }) {
         <div style={styles.field}>
           <p style={styles.label}>VALOR ENVIADO</p>
           <div style={styles.amountRow}>
-            <span style={styles.currency}>R$</span>
+            <span style={styles.currency}>€</span>
             <input
               style={styles.input}
               type="number"
