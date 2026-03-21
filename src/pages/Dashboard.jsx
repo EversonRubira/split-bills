@@ -13,13 +13,11 @@ export default function Dashboard({ user, onLogout }) {
   const [year, setYear] = useState(now.getFullYear())
   const [bills, setBills] = useState([])
   const [payments, setPayments] = useState([])
-  const [allPayments, setAllPayments] = useState([])
   const [showAdd, setShowAdd] = useState(false)
   const [loading, setLoading] = useState(true)
 
   useEffect(() => { fetchBills() }, [])
   useEffect(() => { fetchPayments() }, [month, year])
-  useEffect(() => { fetchAllPayments() }, [])
 
   const fetchBills = async () => {
     const { data } = await supabase.from('bills').select('*').eq('is_active', true).order('name')
@@ -30,11 +28,6 @@ export default function Dashboard({ user, onLogout }) {
   const fetchPayments = async () => {
     const { data } = await supabase.from('payments').select('*').eq('month', month).eq('year', year)
     setPayments(data || [])
-  }
-
-  const fetchAllPayments = async () => {
-    const { data } = await supabase.from('payments').select('*')
-    setAllPayments(data || [])
   }
 
   const activeBills = bills.filter(bill => {
@@ -64,16 +57,12 @@ export default function Dashboard({ user, onLogout }) {
       month,
       year,
     }).select().single()
-    if (data) {
-      setPayments(prev => [...prev, data])
-      setAllPayments(prev => [...prev, data])
-    }
+    if (data) setPayments(prev => [...prev, data])
   }
 
   const handleUndoPay = async (id) => {
     await supabase.from('payments').delete().eq('id', id)
     setPayments(prev => prev.filter(p => p.id !== id))
-    setAllPayments(prev => prev.filter(p => p.id !== id))
   }
 
   const handleDelete = async (id) => {
@@ -143,7 +132,6 @@ export default function Dashboard({ user, onLogout }) {
                 onPay={handlePay}
                 onUndoPay={handleUndoPay}
                 onDelete={handleDelete}
-                currentUser={user}
               />
             ))}
           </div>

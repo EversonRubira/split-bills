@@ -50,7 +50,7 @@ export default function BalanceCard({ payments, bills = [] }) {
               ...styles.barFill,
               width: `${eversonPaidPct}%`,
               background: eversonDone
-                ? 'transparent'
+                ? 'linear-gradient(90deg, #6ee7b7, #10b981)'
                 : 'linear-gradient(90deg, #93c5fd, #2563eb)',
             }} />
           </div>
@@ -72,7 +72,7 @@ export default function BalanceCard({ payments, bills = [] }) {
               ...styles.barFill,
               width: `${claudiaPaidPct}%`,
               background: claudiaDone
-                ? 'transparent'
+                ? 'linear-gradient(90deg, #6ee7b7, #10b981)'
                 : 'linear-gradient(90deg, #f9a8d4, #db2777)',
             }} />
           </div>
@@ -81,14 +81,6 @@ export default function BalanceCard({ payments, bills = [] }) {
           </span>
         </div>
 
-        {/* Meta por pessoa */}
-        {fairShare > 0 && (
-          <div style={styles.fairLegend}>
-            <div style={styles.fairDash} />
-            <span style={styles.fairText}>R$ {fairShare.toFixed(2)} cada</span>
-            <div style={styles.fairDash} />
-          </div>
-        )}
       </div>
 
       <div style={styles.separator} />
@@ -190,13 +182,12 @@ const styles = {
     borderRadius: '20px',
     overflow: 'hidden',
     position: 'relative',
-    transition: 'background 0.4s ease',
+    background: 'rgba(0,0,0,0.06)',
   },
   barFill: {
     height: '100%',
     borderRadius: '20px',
     transition: 'width 0.6s ease, background 0.4s ease',
-    minWidth: '4px',
   },
   barValue: {
     fontSize: '11px',
