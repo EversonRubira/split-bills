@@ -55,7 +55,7 @@ export default function BalanceCard({ payments, bills = [] }) {
             }} />
           </div>
           <span style={{...styles.barValue, color: eversonDone ? 'var(--success)' : 'var(--everson)'}}>
-            R$ {fairShare.toFixed(2)}
+            R$ {eversonPaid.toFixed(2)}
           </span>
         </div>
 
@@ -77,7 +77,7 @@ export default function BalanceCard({ payments, bills = [] }) {
             }} />
           </div>
           <span style={{...styles.barValue, color: claudiaDone ? 'var(--success)' : 'var(--claudia)'}}>
-            R$ {fairShare.toFixed(2)}
+            R$ {claudiaPaid.toFixed(2)}
           </span>
         </div>
 
@@ -197,26 +197,6 @@ const styles = {
     minWidth: '80px',
     textAlign: 'right',
     transition: 'color 0.4s ease',
-  },
-  checkMark: {
-    color: 'var(--success)',
-  },
-  fairLegend: {
-    display: 'flex',
-    alignItems: 'center',
-    gap: '8px',
-    marginTop: '-4px',
-  },
-  fairDash: {
-    flex: 1,
-    height: '1px',
-    background: 'rgba(0,0,0,0.1)',
-  },
-  fairText: {
-    fontSize: '11px',
-    color: 'var(--text-dim)',
-    fontFamily: 'var(--font-mono)',
-    whiteSpace: 'nowrap',
   },
   separator: {
     height: '1px',

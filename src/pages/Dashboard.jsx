@@ -48,7 +48,7 @@ export default function Dashboard({ user, onLogout }) {
     if (data) setBills(prev => [...prev, data].sort((a,b) => a.name.localeCompare(b.name)))
   }
 
- const handlePay = async (bill, paidBy, amount) => {
+  const handlePay = async (bill, paidBy, amount) => {
     const { data } = await supabase.from('payments').insert({
       bill_id: bill.id,
       bill_name: bill.name,
@@ -150,7 +150,7 @@ const styles = {
     flexDirection: 'column',
     background: 'linear-gradient(160deg, #f0f4f8 0%, #e8eef5 50%, #dde6f0 100%)',
   },
- header: {
+  header: {
     display: 'flex',
     justifyContent: 'space-between',
     alignItems: 'center',
@@ -163,7 +163,6 @@ const styles = {
     WebkitBackdropFilter: 'blur(16px)',
     zIndex: 10,
   },
-  
   headerLeft: {
     display: 'flex',
     alignItems: 'center',
@@ -210,7 +209,6 @@ const styles = {
     backdropFilter: 'blur(12px)',
     WebkitBackdropFilter: 'blur(12px)',
   },
-  
   navBtn: {
     background: 'white',
     color: 'var(--text-muted)',
