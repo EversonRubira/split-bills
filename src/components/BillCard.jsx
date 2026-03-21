@@ -32,6 +32,9 @@ export default function BillCard({ bill, payment, onPay, onUndoPay, onDelete }) 
               {payment.paid_by}
             </span>
           </span>
+          <button style={styles.undoBtn} onClick={() => onUndoPay(payment.id)}>
+            desfazer
+          </button>
         </div>
       ) : (
         <div style={styles.actions}>
@@ -183,6 +186,14 @@ const styles = {
     background: 'rgba(219,39,119,0.08)',
     color: 'var(--claudia)',
     borderColor: 'rgba(219,39,119,0.15)',
+  },
+  undoBtn: {
+    background: 'none',
+    color: 'var(--text-dim)',
+    fontSize: '11px',
+    padding: '0',
+    letterSpacing: '0.3px',
+    textDecoration: 'underline',
   },
   deleteBtn: {
     background: 'none',
