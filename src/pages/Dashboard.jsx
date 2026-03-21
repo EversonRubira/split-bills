@@ -90,11 +90,6 @@ export default function Dashboard({ user, onLogout }) {
     if (data) setTransfers(prev => [...prev, data])
   }
 
-  const handleDeleteTransfer = async (id) => {
-    await supabase.from('transfers').delete().eq('id', id)
-    setTransfers(prev => prev.filter(t => t.id !== id))
-  }
-
   const prevMonth = () => {
     if (month === 1) { setMonth(12); setYear(y => y - 1) }
     else setMonth(m => m - 1)
@@ -135,7 +130,6 @@ export default function Dashboard({ user, onLogout }) {
           bills={activeBills}
           transfers={transfers}
           onAddTransfer={() => setShowTransfer(true)}
-          onDeleteTransfer={handleDeleteTransfer}
         />
 
         <div style={styles.sectionHeader}>

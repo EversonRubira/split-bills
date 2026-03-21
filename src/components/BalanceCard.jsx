@@ -1,4 +1,4 @@
-export default function BalanceCard({ payments, bills = [], transfers = [], onAddTransfer, onDeleteTransfer }) {
+export default function BalanceCard({ payments, bills = [], transfers = [], onAddTransfer }) {
   const eversonPaid = payments
     .filter(p => p.paid_by === 'Everson')
     .reduce((sum, p) => sum + Number(p.amount), 0)
@@ -30,9 +30,9 @@ export default function BalanceCard({ payments, bills = [], transfers = [], onAd
   const creditor = netOwed > 0 ? 'Everson' : 'Claudia'
   const balanced = amount < 0.01
 
-  // % das barras: sobre o total de contas
-  const eversonPct = totalBills > 0 ? Math.min((eversonPaid / totalBills) * 100, 100) : 0
-  const claudiaPct = totalBills > 0 ? Math.min((claudiaPaid / totalBills) * 100, 100) : 0
+  // % das barras: sobre o total de contas, incluindo transferências
+  const eversonPct = totalBills > 0 ? Math.min((eversonEffective / totalBills) * 100, 100) : 0
+  const claudiaPct = totalBills > 0 ? Math.min((claudiaEffective / totalBills) * 100, 100) : 0
 
   const eversonDone = eversonEffective >= fairShare - 0.01
   const claudiaDone = claudiaEffective >= fairShare - 0.01
@@ -70,7 +70,7 @@ export default function BalanceCard({ payments, bills = [], transfers = [], onAd
             <div style={styles.fairMark} />
           </div>
           <span style={{...styles.barValue, color: eversonDone ? 'var(--success)' : 'var(--everson)'}}>
-            € {eversonPaid.toFixed(2)}
+            € {eversonEffective.toFixed(2)}
           </span>
         </div>
 
@@ -93,7 +93,7 @@ export default function BalanceCard({ payments, bills = [], transfers = [], onAd
             <div style={styles.fairMark} />
           </div>
           <span style={{...styles.barValue, color: claudiaDone ? 'var(--success)' : 'var(--claudia)'}}>
-            € {claudiaPaid.toFixed(2)}
+            € {claudiaEffective.toFixed(2)}
           </span>
         </div>
 
@@ -143,10 +143,7 @@ export default function BalanceCard({ payments, bills = [], transfers = [], onAd
                 </span>
                 {t.note ? <span style={styles.transferNote}> · {t.note}</span> : null}
               </div>
-              <div style={styles.transferRight}>
-                <span style={styles.transferAmount}>€ {Number(t.amount).toFixed(2)}</span>
-                <button style={styles.deleteTransfer} onClick={() => onDeleteTransfer(t.id)}>×</button>
-              </div>
+              <span style={styles.transferAmount}>€ {Number(t.amount).toFixed(2)}</span>
             </div>
           ))}
         </div>
@@ -322,25 +319,11 @@ const styles = {
     color: 'var(--text-dim)',
     fontStyle: 'italic',
   },
-  transferRight: {
-    display: 'flex',
-    alignItems: 'center',
-    gap: '8px',
-  },
   transferAmount: {
     fontSize: '13px',
     fontWeight: '700',
     color: 'var(--success)',
     fontFamily: 'var(--font-mono)',
-  },
-  deleteTransfer: {
-    background: 'transparent',
-    border: 'none',
-    color: 'var(--text-dim)',
-    fontSize: '18px',
-    lineHeight: 1,
-    padding: '0 2px',
-    cursor: 'pointer',
   },
   transferBtn: {
     background: 'linear-gradient(135deg, #059669, #10b981)',
