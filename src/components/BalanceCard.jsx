@@ -30,9 +30,9 @@ export default function BalanceCard({ payments, bills = [], transfers = [], onAd
   const creditor = netOwed > 0 ? 'Everson' : 'Claudia'
   const balanced = amount < 0.01
 
-  // % das barras: sobre o total de contas
-  const eversonPct = totalBills > 0 ? Math.min((eversonPaid / totalBills) * 100, 100) : 0
-  const claudiaPct = totalBills > 0 ? Math.min((claudiaPaid / totalBills) * 100, 100) : 0
+  // % das barras: sobre o total de contas, incluindo transferências
+  const eversonPct = totalBills > 0 ? Math.min((eversonEffective / totalBills) * 100, 100) : 0
+  const claudiaPct = totalBills > 0 ? Math.min((claudiaEffective / totalBills) * 100, 100) : 0
 
   const eversonDone = eversonEffective >= fairShare - 0.01
   const claudiaDone = claudiaEffective >= fairShare - 0.01
@@ -70,7 +70,7 @@ export default function BalanceCard({ payments, bills = [], transfers = [], onAd
             <div style={styles.fairMark} />
           </div>
           <span style={{...styles.barValue, color: eversonDone ? 'var(--success)' : 'var(--everson)'}}>
-            € {eversonPaid.toFixed(2)}
+            € {eversonEffective.toFixed(2)}
           </span>
         </div>
 
@@ -93,7 +93,7 @@ export default function BalanceCard({ payments, bills = [], transfers = [], onAd
             <div style={styles.fairMark} />
           </div>
           <span style={{...styles.barValue, color: claudiaDone ? 'var(--success)' : 'var(--claudia)'}}>
-            € {claudiaPaid.toFixed(2)}
+            € {claudiaEffective.toFixed(2)}
           </span>
         </div>
 
