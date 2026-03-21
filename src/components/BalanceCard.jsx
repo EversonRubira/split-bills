@@ -1,4 +1,4 @@
-export default function BalanceCard({ payments, bills = [] }) {
+export default function BalanceCard({ payments, bills = [], transfers = [], onAddTransfer, onDeleteTransfer }) {
   const eversonPaid = payments
     .filter(p => p.paid_by === 'Everson')
     .reduce((sum, p) => sum + Number(p.amount), 0)
@@ -7,22 +7,35 @@ export default function BalanceCard({ payments, bills = [] }) {
     .filter(p => p.paid_by === 'Claudia')
     .reduce((sum, p) => sum + Number(p.amount), 0)
 
+  // Transferências: quem enviou dinheiro tem crédito extra
+  const eversonSent = transfers
+    .filter(t => t.from_person === 'Everson')
+    .reduce((sum, t) => sum + Number(t.amount), 0)
+
+  const claudiaSent = transfers
+    .filter(t => t.from_person === 'Claudia')
+    .reduce((sum, t) => sum + Number(t.amount), 0)
+
+  const eversonEffective = eversonPaid + eversonSent
+  const claudiaEffective = claudiaPaid + claudiaSent
+
   const totalBills = bills.reduce((sum, b) => sum + Number(b.amount), 0)
   const fairShare = totalBills / 2
 
-  const diff = eversonPaid - fairShare
-  const amount = Math.abs(diff)
-  const debtor = diff > 0 ? 'Claudia' : 'Everson'
-  const creditor = diff > 0 ? 'Everson' : 'Claudia'
+  // netOwed > 0 → Claudia deve para Everson; < 0 → Everson deve para Claudia
+  // Transferências de Claudia quitam a dívida dela; transferências de Everson criam dívida nova
+  const netOwed = eversonPaid - fairShare - claudiaSent + eversonSent
+  const amount = Math.abs(netOwed)
+  const debtor = netOwed > 0 ? 'Claudia' : 'Everson'
+  const creditor = netOwed > 0 ? 'Everson' : 'Claudia'
   const balanced = amount < 0.01
 
-  // % de cada um sobre o total geral (não sobre o fairShare)
+  // % das barras: sobre o total de contas
   const eversonPct = totalBills > 0 ? Math.min((eversonPaid / totalBills) * 100, 100) : 0
   const claudiaPct = totalBills > 0 ? Math.min((claudiaPaid / totalBills) * 100, 100) : 0
 
-  // "done" = pagou pelo menos a sua metade
-  const eversonDone = eversonPaid >= fairShare - 0.01
-  const claudiaDone = claudiaPaid >= fairShare - 0.01
+  const eversonDone = eversonEffective >= fairShare - 0.01
+  const claudiaDone = claudiaEffective >= fairShare - 0.01
 
   const total = eversonPaid + claudiaPaid
 
@@ -54,7 +67,6 @@ export default function BalanceCard({ payments, bills = [] }) {
                 ? 'linear-gradient(90deg, #059669, #10b981)'
                 : 'linear-gradient(90deg, #93c5fd, #2563eb)',
             }} />
-            {/* Marca de 50% */}
             <div style={styles.fairMark} />
           </div>
           <span style={{...styles.barValue, color: eversonDone ? 'var(--success)' : 'var(--everson)'}}>
@@ -78,7 +90,6 @@ export default function BalanceCard({ payments, bills = [] }) {
                 ? 'linear-gradient(90deg, #059669, #10b981)'
                 : 'linear-gradient(90deg, #f9a8d4, #db2777)',
             }} />
-            {/* Marca de 50% */}
             <div style={styles.fairMark} />
           </div>
           <span style={{...styles.barValue, color: claudiaDone ? 'var(--success)' : 'var(--claudia)'}}>
@@ -109,6 +120,42 @@ export default function BalanceCard({ payments, bills = [] }) {
           </span>
         </p>
       )}
+
+      {/* Transferências registradas */}
+      {transfers.length > 0 && (
+        <div style={styles.transfersSection}>
+          <p style={styles.transfersTitle}>ACERTOS</p>
+          {transfers.map(t => (
+            <div key={t.id} style={styles.transferRow}>
+              <div style={styles.transferInfo}>
+                <span style={{
+                  ...styles.transferName,
+                  color: t.from_person === 'Everson' ? 'var(--everson)' : 'var(--claudia)',
+                }}>
+                  {t.from_person}
+                </span>
+                <span style={styles.transferArrow}>→</span>
+                <span style={{
+                  ...styles.transferName,
+                  color: t.to_person === 'Everson' ? 'var(--everson)' : 'var(--claudia)',
+                }}>
+                  {t.to_person}
+                </span>
+                {t.note ? <span style={styles.transferNote}> · {t.note}</span> : null}
+              </div>
+              <div style={styles.transferRight}>
+                <span style={styles.transferAmount}>R$ {Number(t.amount).toFixed(2)}</span>
+                <button style={styles.deleteTransfer} onClick={() => onDeleteTransfer(t.id)}>×</button>
+              </div>
+            </div>
+          ))}
+        </div>
+      )}
+
+      {/* Botão de acerto */}
+      <button style={styles.transferBtn} onClick={onAddTransfer}>
+        + Registrar acerto
+      </button>
     </div>
   )
 }
@@ -194,7 +241,6 @@ const styles = {
     borderRadius: '20px',
     transition: 'width 0.6s ease, background 0.4s ease',
   },
-  // Linha vertical no meio da barra indicando a cota justa (50%)
   fairMark: {
     position: 'absolute',
     top: 0,
@@ -234,5 +280,77 @@ const styles = {
     color: 'var(--text)',
     fontWeight: '600',
     fontFamily: 'var(--font-mono)',
+  },
+  transfersSection: {
+    display: 'flex',
+    flexDirection: 'column',
+    gap: '8px',
+    background: 'rgba(5,150,105,0.06)',
+    borderRadius: '12px',
+    padding: '12px',
+  },
+  transfersTitle: {
+    fontSize: '9px',
+    fontWeight: '700',
+    color: 'var(--success)',
+    letterSpacing: '1.5px',
+    fontFamily: 'var(--font-mono)',
+  },
+  transferRow: {
+    display: 'flex',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    gap: '8px',
+  },
+  transferInfo: {
+    display: 'flex',
+    alignItems: 'center',
+    gap: '4px',
+    flex: 1,
+    flexWrap: 'wrap',
+  },
+  transferName: {
+    fontSize: '13px',
+    fontWeight: '600',
+  },
+  transferArrow: {
+    fontSize: '13px',
+    color: 'var(--text-dim)',
+  },
+  transferNote: {
+    fontSize: '11px',
+    color: 'var(--text-dim)',
+    fontStyle: 'italic',
+  },
+  transferRight: {
+    display: 'flex',
+    alignItems: 'center',
+    gap: '8px',
+  },
+  transferAmount: {
+    fontSize: '13px',
+    fontWeight: '700',
+    color: 'var(--success)',
+    fontFamily: 'var(--font-mono)',
+  },
+  deleteTransfer: {
+    background: 'transparent',
+    border: 'none',
+    color: 'var(--text-dim)',
+    fontSize: '18px',
+    lineHeight: 1,
+    padding: '0 2px',
+    cursor: 'pointer',
+  },
+  transferBtn: {
+    background: 'linear-gradient(135deg, #059669, #10b981)',
+    color: 'white',
+    fontSize: '13px',
+    fontWeight: '700',
+    padding: '12px',
+    borderRadius: '12px',
+    border: 'none',
+    cursor: 'pointer',
+    letterSpacing: '0.3px',
   },
 }
