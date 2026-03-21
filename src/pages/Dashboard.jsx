@@ -3,6 +3,7 @@ import { supabase } from '../lib/supabase'
 import BalanceCard from '../components/BalanceCard'
 import BillCard from '../components/BillCard'
 import AddBillModal from '../components/AddBillModal'
+import TransferModal from '../components/TransferModal'
 
 const MONTHS = ['Janeiro','Fevereiro','Março','Abril','Maio','Junho',
   'Julho','Agosto','Setembro','Outubro','Novembro','Dezembro']
@@ -13,11 +14,13 @@ export default function Dashboard({ user, onLogout }) {
   const [year, setYear] = useState(now.getFullYear())
   const [bills, setBills] = useState([])
   const [payments, setPayments] = useState([])
+  const [transfers, setTransfers] = useState([])
   const [showAdd, setShowAdd] = useState(false)
+  const [showTransfer, setShowTransfer] = useState(false)
   const [loading, setLoading] = useState(true)
 
   useEffect(() => { fetchBills() }, [])
-  useEffect(() => { fetchPayments() }, [month, year])
+  useEffect(() => { fetchPayments(); fetchTransfers() }, [month, year])
 
   const fetchBills = async () => {
     const { data } = await supabase.from('bills').select('*').eq('is_active', true).order('name')
@@ -28,6 +31,11 @@ export default function Dashboard({ user, onLogout }) {
   const fetchPayments = async () => {
     const { data } = await supabase.from('payments').select('*').eq('month', month).eq('year', year)
     setPayments(data || [])
+  }
+
+  const fetchTransfers = async () => {
+    const { data } = await supabase.from('transfers').select('*').eq('month', month).eq('year', year)
+    setTransfers(data || [])
   }
 
   const activeBills = bills.filter(bill => {
@@ -70,6 +78,23 @@ export default function Dashboard({ user, onLogout }) {
     setBills(prev => prev.filter(b => b.id !== id))
   }
 
+  const handleAddTransfer = async ({ from_person, to_person, amount, note }) => {
+    const { data } = await supabase.from('transfers').insert({
+      from_person,
+      to_person,
+      amount,
+      note: note || null,
+      month,
+      year,
+    }).select().single()
+    if (data) setTransfers(prev => [...prev, data])
+  }
+
+  const handleDeleteTransfer = async (id) => {
+    await supabase.from('transfers').delete().eq('id', id)
+    setTransfers(prev => prev.filter(t => t.id !== id))
+  }
+
   const prevMonth = () => {
     if (month === 1) { setMonth(12); setYear(y => y - 1) }
     else setMonth(m => m - 1)
@@ -105,7 +130,13 @@ export default function Dashboard({ user, onLogout }) {
       </div>
 
       <div style={styles.content}>
-        <BalanceCard payments={payments} bills={activeBills} />
+        <BalanceCard
+          payments={payments}
+          bills={activeBills}
+          transfers={transfers}
+          onAddTransfer={() => setShowTransfer(true)}
+          onDeleteTransfer={handleDeleteTransfer}
+        />
 
         <div style={styles.sectionHeader}>
           <p style={styles.sectionTitle}>CONTAS DO MÊS</p>
@@ -139,6 +170,13 @@ export default function Dashboard({ user, onLogout }) {
       </div>
 
       {showAdd && <AddBillModal onAdd={handleAddBill} onClose={() => setShowAdd(false)} />}
+      {showTransfer && (
+        <TransferModal
+          currentUser={user}
+          onAdd={handleAddTransfer}
+          onClose={() => setShowTransfer(false)}
+        />
+      )}
     </div>
   )
 }

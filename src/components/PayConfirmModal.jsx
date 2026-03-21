@@ -23,7 +23,7 @@ export default function PayConfirmModal({ bill, paidBy, onConfirm, onClose }) {
         </p>
 
         <div style={styles.field}>
-          <label style={styles.label}>Valor pago (R$)</label>
+          <label style={styles.label}>Valor pago (€)</label>
           <input
             style={styles.input}
             type="number"
@@ -33,7 +33,7 @@ export default function PayConfirmModal({ bill, paidBy, onConfirm, onClose }) {
             onChange={e => setAmount(e.target.value)}
             autoFocus
           />
-          <p style={styles.hint}>Valor base: R$ {Number(bill.amount).toFixed(2)}</p>
+          <p style={styles.hint}>Valor base: € {Number(bill.amount).toFixed(2)}</p>
         </div>
 
         <div style={styles.buttons}>

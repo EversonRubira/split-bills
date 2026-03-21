@@ -17,8 +17,8 @@ export default function BillCard({ bill, payment, onPay, onUndoPay, onDelete }) 
           <span style={styles.due}>vence dia {bill.day_of_month}</span>
         </div>
         <div style={styles.right}>
-          <span style={styles.amount}>R$ {isPaid ? Number(payment.amount).toFixed(2) : Number(bill.amount).toFixed(2)}</span>
-          <span style={styles.split}>R$ {((isPaid ? Number(payment.amount) : Number(bill.amount)) / 2).toFixed(2)} cada</span>
+          <span style={styles.amount}>€ {isPaid ? Number(payment.amount).toFixed(2) : Number(bill.amount).toFixed(2)}</span>
+          <span style={styles.split}>€ {((isPaid ? Number(payment.amount) : Number(bill.amount)) / 2).toFixed(2)} cada</span>
         </div>
       </div>
 
