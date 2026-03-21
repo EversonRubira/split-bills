@@ -16,12 +16,13 @@ export default function BalanceCard({ payments, bills = [] }) {
   const creditor = diff > 0 ? 'Everson' : 'Claudia'
   const balanced = amount < 0.01
 
-  const eversonRemaining = Math.max(fairShare - eversonPaid, 0)
-  const claudiaRemaining = Math.max(fairShare - claudiaPaid, 0)
-  const eversonPaidPct = fairShare > 0 ? Math.min((eversonPaid / fairShare) * 100, 100) : 0
-  const claudiaPaidPct = fairShare > 0 ? Math.min((claudiaPaid / fairShare) * 100, 100) : 0
-  const eversonDone = fairShare > 0 && eversonRemaining < 0.01
-  const claudiaDone = fairShare > 0 && claudiaRemaining < 0.01
+  // % de cada um sobre o total geral (não sobre o fairShare)
+  const eversonPct = totalBills > 0 ? Math.min((eversonPaid / totalBills) * 100, 100) : 0
+  const claudiaPct = totalBills > 0 ? Math.min((claudiaPaid / totalBills) * 100, 100) : 0
+
+  // "done" = pagou pelo menos a sua metade
+  const eversonDone = eversonPaid >= fairShare - 0.01
+  const claudiaDone = claudiaPaid >= fairShare - 0.01
 
   const total = eversonPaid + claudiaPaid
 
@@ -48,14 +49,16 @@ export default function BalanceCard({ payments, bills = [] }) {
           <div style={styles.barTrack}>
             <div style={{
               ...styles.barFill,
-              width: `${eversonPaidPct}%`,
+              width: `${eversonPct}%`,
               background: eversonDone
-                ? 'linear-gradient(90deg, #6ee7b7, #10b981)'
+                ? 'linear-gradient(90deg, #059669, #10b981)'
                 : 'linear-gradient(90deg, #93c5fd, #2563eb)',
             }} />
+            {/* Marca de 50% */}
+            <div style={styles.fairMark} />
           </div>
           <span style={{...styles.barValue, color: eversonDone ? 'var(--success)' : 'var(--everson)'}}>
-            R$ {fairShare.toFixed(2)}
+            R$ {eversonPaid.toFixed(2)}
           </span>
         </div>
 
@@ -70,14 +73,16 @@ export default function BalanceCard({ payments, bills = [] }) {
           <div style={styles.barTrack}>
             <div style={{
               ...styles.barFill,
-              width: `${claudiaPaidPct}%`,
+              width: `${claudiaPct}%`,
               background: claudiaDone
-                ? 'linear-gradient(90deg, #6ee7b7, #10b981)'
+                ? 'linear-gradient(90deg, #059669, #10b981)'
                 : 'linear-gradient(90deg, #f9a8d4, #db2777)',
             }} />
+            {/* Marca de 50% */}
+            <div style={styles.fairMark} />
           </div>
           <span style={{...styles.barValue, color: claudiaDone ? 'var(--success)' : 'var(--claudia)'}}>
-            R$ {fairShare.toFixed(2)}
+            R$ {claudiaPaid.toFixed(2)}
           </span>
         </div>
 
@@ -182,12 +187,22 @@ const styles = {
     borderRadius: '20px',
     overflow: 'hidden',
     position: 'relative',
-    background: 'rgba(0,0,0,0.06)',
+    background: 'rgba(0,0,0,0.08)',
   },
   barFill: {
     height: '100%',
     borderRadius: '20px',
     transition: 'width 0.6s ease, background 0.4s ease',
+  },
+  // Linha vertical no meio da barra indicando a cota justa (50%)
+  fairMark: {
+    position: 'absolute',
+    top: 0,
+    left: '50%',
+    width: '2px',
+    height: '100%',
+    background: 'rgba(0,0,0,0.2)',
+    transform: 'translateX(-50%)',
   },
   barValue: {
     fontSize: '11px',
@@ -197,26 +212,6 @@ const styles = {
     minWidth: '80px',
     textAlign: 'right',
     transition: 'color 0.4s ease',
-  },
-  checkMark: {
-    color: 'var(--success)',
-  },
-  fairLegend: {
-    display: 'flex',
-    alignItems: 'center',
-    gap: '8px',
-    marginTop: '-4px',
-  },
-  fairDash: {
-    flex: 1,
-    height: '1px',
-    background: 'rgba(0,0,0,0.1)',
-  },
-  fairText: {
-    fontSize: '11px',
-    color: 'var(--text-dim)',
-    fontFamily: 'var(--font-mono)',
-    whiteSpace: 'nowrap',
   },
   separator: {
     height: '1px',
