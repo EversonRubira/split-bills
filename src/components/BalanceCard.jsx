@@ -7,7 +7,7 @@ export default function BalanceCard({ payments, bills = [], transfers = [], onAd
     .filter(p => p.paid_by === 'Claudia')
     .reduce((sum, p) => sum + Number(p.amount), 0)
 
-  // Transferências: quem enviou dinheiro tem crédito extra
+  // Transferências enviadas e recebidas
   const eversonSent = transfers
     .filter(t => t.from_person === 'Everson')
     .reduce((sum, t) => sum + Number(t.amount), 0)
@@ -16,21 +16,29 @@ export default function BalanceCard({ payments, bills = [], transfers = [], onAd
     .filter(t => t.from_person === 'Claudia')
     .reduce((sum, t) => sum + Number(t.amount), 0)
 
-  const eversonEffective = eversonPaid + eversonSent
-  const claudiaEffective = claudiaPaid + claudiaSent
+  const eversonReceived = transfers
+    .filter(t => t.to_person === 'Everson')
+    .reduce((sum, t) => sum + Number(t.amount), 0)
+
+  const claudiaReceived = transfers
+    .filter(t => t.to_person === 'Claudia')
+    .reduce((sum, t) => sum + Number(t.amount), 0)
+
+  // Contribuição líquida: o que pagou + enviou - recebeu
+  const eversonEffective = eversonPaid + eversonSent - eversonReceived
+  const claudiaEffective = claudiaPaid + claudiaSent - claudiaReceived
 
   const totalBills = bills.reduce((sum, b) => sum + Number(b.amount), 0)
   const fairShare = totalBills / 2
 
   // netOwed > 0 → Claudia deve para Everson; < 0 → Everson deve para Claudia
-  // Transferências de Claudia quitam a dívida dela; transferências de Everson criam dívida nova
   const netOwed = eversonPaid - fairShare - claudiaSent + eversonSent
   const amount = Math.abs(netOwed)
   const debtor = netOwed > 0 ? 'Claudia' : 'Everson'
   const creditor = netOwed > 0 ? 'Everson' : 'Claudia'
   const balanced = amount < 0.01
 
-  // % das barras: sobre o total de contas, incluindo transferências
+  // % das barras: contribuição líquida de cada um sobre o total
   const eversonPct = totalBills > 0 ? Math.min((eversonEffective / totalBills) * 100, 100) : 0
   const claudiaPct = totalBills > 0 ? Math.min((claudiaEffective / totalBills) * 100, 100) : 0
 
