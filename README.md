@@ -10,6 +10,7 @@ App PWA de controle financeiro para casais — divide contas mensais de forma si
 - Registo de quem pagou cada conta
 - Divisão 50/50 automática
 - Saldo geral mostrando quem deve a quem
+- Acertos diretos entre os dois (transferências imutáveis)
 - Navegação por mês
 - PWA instalável no iPhone e Android
 
@@ -72,7 +73,23 @@ CREATE TABLE public.payments (
   paid_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT now(),
   UNIQUE(bill_id, month, year)
 );
+
+-- Acertos/transferências entre os utilizadores
+CREATE TABLE public.transfers (
+  id UUID NOT NULL DEFAULT gen_random_uuid() PRIMARY KEY,
+  from_person TEXT NOT NULL CHECK (from_person IN ('Everson', 'Claudia')),
+  to_person TEXT NOT NULL CHECK (to_person IN ('Everson', 'Claudia')),
+  amount NUMERIC(10,2) NOT NULL,
+  note TEXT,
+  month INTEGER NOT NULL,
+  year INTEGER NOT NULL,
+  created_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT now()
+);
 ```
+
+## Infraestrutura
+
+O Supabase no plano gratuito pausa projetos após 7 dias sem uso. Para evitar isso, está configurado um cron job no [cron-job.org](https://cron-job.org) que faz um ping diário na API do Supabase, mantendo o projeto sempre ativo.
 
 ## 🔐 Segurança
 
