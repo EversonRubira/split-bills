@@ -18,23 +18,28 @@ export default function Dashboard({ user, onLogout }) {
   const [showAdd, setShowAdd] = useState(false)
   const [showTransfer, setShowTransfer] = useState(false)
   const [loading, setLoading] = useState(true)
+  const [fetchError, setFetchError] = useState(null)
 
   useEffect(() => { fetchBills() }, [])
   useEffect(() => { fetchPayments(); fetchTransfers() }, [month, year])
 
   const fetchBills = async () => {
-    const { data } = await supabase.from('bills').select('*').eq('is_active', true).order('name')
+    const { data, error } = await supabase.from('bills').select('*').eq('is_active', true).order('name')
+    if (error) { setFetchError(error.message); setLoading(false); return }
+    setFetchError(null)
     setBills(data || [])
     setLoading(false)
   }
 
   const fetchPayments = async () => {
-    const { data } = await supabase.from('payments').select('*').eq('month', month).eq('year', year)
+    const { data, error } = await supabase.from('payments').select('*').eq('month', month).eq('year', year)
+    if (error) { setFetchError(error.message); return }
     setPayments(data || [])
   }
 
   const fetchTransfers = async () => {
-    const { data } = await supabase.from('transfers').select('*').eq('month', month).eq('year', year)
+    const { data, error } = await supabase.from('transfers').select('*').eq('month', month).eq('year', year)
+    if (error) { setFetchError(error.message); return }
     setTransfers(data || [])
   }
 
@@ -125,6 +130,19 @@ export default function Dashboard({ user, onLogout }) {
       </div>
 
       <div style={styles.content}>
+        {fetchError && (
+          <div style={styles.errorBanner}>
+            <span style={styles.errorIcon}>⚠</span>
+            <div>
+              <p style={styles.errorTitle}>Erro de conexão</p>
+              <p style={styles.errorMsg}>Não foi possível carregar os dados. Verifique sua conexão e tente novamente.</p>
+            </div>
+            <button style={styles.retryBtn} onClick={() => { setFetchError(null); fetchBills(); fetchPayments(); fetchTransfers() }}>
+              Tentar novamente
+            </button>
+          </div>
+        )}
+
         <BalanceCard
           payments={payments}
           bills={activeBills}
@@ -176,6 +194,45 @@ export default function Dashboard({ user, onLogout }) {
 }
 
 const styles = {
+  errorBanner: {
+    background: 'rgba(239,68,68,0.08)',
+    border: '1px solid rgba(239,68,68,0.2)',
+    borderRadius: 'var(--radius-sm)',
+    padding: '14px 16px',
+    display: 'flex',
+    alignItems: 'flex-start',
+    gap: '12px',
+  },
+  errorIcon: {
+    fontSize: '18px',
+    color: 'var(--danger)',
+    flexShrink: 0,
+    lineHeight: 1.2,
+  },
+  errorTitle: {
+    fontSize: '13px',
+    fontWeight: '600',
+    color: 'var(--danger)',
+    marginBottom: '2px',
+  },
+  errorMsg: {
+    fontSize: '12px',
+    color: 'var(--text-muted)',
+    lineHeight: 1.4,
+  },
+  retryBtn: {
+    marginLeft: 'auto',
+    flexShrink: 0,
+    background: 'var(--danger)',
+    color: 'white',
+    fontSize: '12px',
+    fontWeight: '600',
+    padding: '6px 12px',
+    borderRadius: '8px',
+    border: 'none',
+    cursor: 'pointer',
+    alignSelf: 'center',
+  },
   container: {
     minHeight: '100vh',
     display: 'flex',
